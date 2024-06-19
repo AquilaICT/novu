@@ -5,7 +5,7 @@ import {
   ISmsProvider,
 } from '@novu/stateless';
 import GeezSMS from 'geezsms';
-export class GeezSmsSmsProvider implements ISmsProvider {
+export class GeezSmsProvider implements ISmsProvider {
   id = 'geez-sms';
   channelType = ChannelTypeEnum.SMS as ChannelTypeEnum.SMS;
   private geezSMS: GeezSMS;
