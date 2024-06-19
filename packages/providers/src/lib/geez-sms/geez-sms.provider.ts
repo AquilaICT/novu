@@ -25,11 +25,11 @@ export class GeezSmsSmsProvider implements ISmsProvider {
     const message = {
       phone: options.to,
       msg: options.content,
-      sender_id: options.from || this.config.senderId  // Optional
+      sender_id: options.from ?? this.config.senderId  // Optional
     };
     const response = await this.geezSMS.single.send(message);
     return {
-      id: response.data.api_log_id,
+      id: `${response.data.api_log_id}`,
       date: response.data.date
     };
   }
