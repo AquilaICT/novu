@@ -1,28 +1,41 @@
 import * as http from 'http';
 import * as express from 'express';
-import { serve } from '@novu/echo/express';
-import { Echo } from '@novu/echo';
+// FIXME: subpath import not working with `workspace:` protocol. Currently we need to drill into the module instead of using the ES export.
+import { serve } from '../../../packages/framework/dist/express';
+import { Client, DiscoverWorkflowOutput } from '@novu/framework';
 
-class EchoServer {
+export type ServerStartOptions = {
+  workflows: Array<DiscoverWorkflowOutput>;
+};
+
+export class EchoServer {
   private server: express.Express;
   private app: http.Server;
   private port = 9999;
-  public echo = new Echo({ devModeBypassAuthentication: true });
+  public echo = new Client({ strictAuthentication: false });
 
   get serverPath() {
     return `http://localhost:${this.port}`;
   }
 
-  async start() {
+  async start(options: ServerStartOptions) {
     this.server = express();
     this.server.use(express.json());
-    this.server.use(serve({ client: this.echo }));
+    this.server.use(serve({ client: this.echo, workflows: options.workflows }));
 
-    this.app = await this.server.listen(this.port);
+    await new Promise<void>((resolve) => {
+      this.app = this.server.listen(this.port, () => {
+        resolve();
+      });
+    });
   }
 
   async stop() {
-    await this.app.close();
+    await new Promise<void>((resolve) => {
+      this.app.close(() => {
+        resolve();
+      });
+    });
   }
 }
 

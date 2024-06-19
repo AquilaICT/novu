@@ -1,11 +1,13 @@
 import { ActionIcon, Avatar } from '@mantine/core';
 import { colors, Dropdown, IconLogout, IconOutlineGroupAdd, IconSettings, Text, When } from '@novu/design-system';
-import { CONTEXT_PATH, IS_DOCKER_HOSTED, REACT_APP_VERSION, ROUTES, useAuthContext } from '@novu/shared-web';
+import { CONTEXT_PATH, IS_DOCKER_HOSTED, REACT_APP_VERSION } from '../../../../config';
+import { ROUTES } from '../../../../constants/routes';
+import { useAuth } from '../../../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import { useIsDarkTheme } from '../../../../hooks';
 import { ProfileMenuItem } from './ProfileMenuItem';
 
-const FALLBACK_AVATAR = CONTEXT_PATH + '/static/images/avatar.png';
+const FALLBACK_AVATAR = CONTEXT_PATH + '/static/images/avatar.webp';
 
 const IS_SELF_HOSTED = IS_DOCKER_HOSTED;
 
@@ -23,10 +25,14 @@ const menuItems = [
 ];
 
 export function HeaderMenuItems({}) {
-  const { currentOrganization, currentUser, logout } = useAuthContext();
+  const { currentOrganization, currentUser, logout } = useAuth();
 
   const isDark = useIsDarkTheme();
   const iconColor = isDark ? colors.white : colors.B40;
+
+  if (!currentOrganization) {
+    return null;
+  }
 
   const profileMenuItems = [
     <Dropdown.Item disabled key="user">

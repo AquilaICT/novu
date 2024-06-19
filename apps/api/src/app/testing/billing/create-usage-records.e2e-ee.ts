@@ -39,7 +39,6 @@ describe('CreateUsageRecords', () => {
   const upsertSubscriptionUsecase = { execute: () => Promise.resolve() };
   const getCustomerUsecase = { execute: () => Promise.resolve() };
   const getPlatformNotificationUsageUsecase = { execute: () => Promise.resolve() };
-  const getFeatureFlagUsecase = { execute: () => true };
 
   let createUsageRecordStub: sinon.SinonStub;
   const getOrganizationAdminUserStub = {
@@ -50,7 +49,6 @@ describe('CreateUsageRecords', () => {
     },
   };
   let getPlatformNotificationUsageStub: sinon.SinonStub;
-  let getFeatureFlagStub: sinon.SinonStub;
   let upsertSubscriptionStub: sinon.SinonStub;
   let getCustomerStub: sinon.SinonStub;
 
@@ -66,7 +64,6 @@ describe('CreateUsageRecords', () => {
         notificationsCount: 100,
       },
     ] as any);
-    getFeatureFlagStub = sinon.stub(getFeatureFlagUsecase, 'execute').resolves(true);
     upsertSubscriptionStub = sinon.stub(upsertSubscriptionUsecase, 'execute').resolves({
       licensed: mockMonthlyBusinessSubscription,
       metered: mockMonthlyBusinessSubscription,
@@ -88,7 +85,6 @@ describe('CreateUsageRecords', () => {
     getCustomerStub.reset();
     upsertSubscriptionStub.reset();
     getPlatformNotificationUsageStub.reset();
-    getFeatureFlagStub.reset();
     analyticsServiceStub.track.reset();
   });
 
@@ -98,7 +94,6 @@ describe('CreateUsageRecords', () => {
       getCustomerUsecase,
       upsertSubscriptionUsecase,
       getPlatformNotificationUsageUsecase,
-      getFeatureFlagUsecase,
       analyticsServiceStub,
       getOrganizationAdminUserStub
     );
@@ -125,19 +120,6 @@ describe('CreateUsageRecords', () => {
         endDate: expectedEndDate,
       },
     ]);
-  });
-
-  it('should not get the customer if the feature flag is disabled', async () => {
-    getFeatureFlagStub.resolves(false);
-    const useCase = createUseCase();
-
-    await useCase.execute(
-      CreateUsageRecordsCommand.create({
-        startDate: new Date(),
-      })
-    );
-
-    expect(getCustomerStub.callCount).to.equal(0);
   });
 
   it('should upsert a free-tier subscription if the customer has no subscriptions', async () => {
@@ -237,6 +219,22 @@ describe('CreateUsageRecords', () => {
         notificationsCount: 100,
       },
     ]);
+    const mockNoMeteredSubscription = {
+      id: 'subscription_id',
+      items: {
+        data: [
+          {
+            id: 'item_id_flat',
+            price: { lookup_key: 'business_flat_monthly', recurring: { usage_type: StripeUsageTypeEnum.LICENSED } },
+          },
+        ],
+      },
+    };
+    getCustomerStub.resolves({
+      subscriptions: {
+        data: [mockNoMeteredSubscription],
+      },
+    });
     const useCase = createUseCase();
 
     await useCase.execute(
@@ -246,7 +244,7 @@ describe('CreateUsageRecords', () => {
     );
 
     expect(logStub.lastCall.args[0].message).to.equal(
-      "Subscription item not found for subscriptionId: 'subscription_id' and price lookup key: 'free_usage_notifications'"
+      "No metered subscription found for organizationId: 'organization_id_1'"
     );
 
     logStub.restore();
