@@ -70,3 +70,4 @@ export * from './eazy-sms/eazy-sms.provider';
 export * from './whatsapp-business/whatsapp-business.provider';
 export * from './mobishastra/mobishastra.provider';
 export * from './geez-sms/geez-sms.provider'
+export * from './geez-sms/geez-sms.provider';
