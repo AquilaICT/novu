@@ -454,13 +454,23 @@ export const twilioConfig: IConfigCredentials[] = [
     type: 'string',
     required: true,
   },
+  ...smsConfigBase,
+];
+
+export const geezConfig: IConfigCredentials[] = [
   {
-    key: CredentialsKeyEnum.Token,
-    displayName: 'Auth token',
+    key: CredentialsKeyEnum.ApiKey,
+    displayName: 'Geez Token',
+    description: "you can find geez token from your dashboard.",
     type: 'string',
     required: true,
   },
-  ...smsConfigBase,
+  {
+    key: CredentialsKeyEnum.From,
+    displayName: 'Sender id',
+    type: 'string',
+    required: true,
+  }
 ];
 
 export const messagebirdConfig: IConfigCredentials[] = [

@@ -30,6 +30,7 @@ import {
   brevoSmsConfig,
   whatsAppBusinessConfig,
   eazySmsConfig,
+  geezConfig,
 } from '../credentials';
 import { ChatProviderIdEnum, SmsProviderIdEnum } from '../provider.enum';
 
@@ -101,6 +102,14 @@ export const smsProviders: IProviderConfig[] = [
     credentials: twilioConfig,
     docReference: `https://docs.novu.co/channels-and-providers/sms/twilio${UTM_CAMPAIGN_QUERY_PARAM}`,
     logoFileName: { light: 'twilio.png', dark: 'twilio.png' },
+  },
+  {
+    id: SmsProviderIdEnum.GeezSMS,
+    displayName: 'GeezSMS',
+    channel: ChannelTypeEnum.SMS,
+    credentials: geezConfig,
+    docReference: `https://geezsms.com/${UTM_CAMPAIGN_QUERY_PARAM}`,
+    logoFileName: { light: 'geez-sms.svg', dark: 'geez-sms.svg' },
   },
   {
     id: SmsProviderIdEnum.Gupshup,

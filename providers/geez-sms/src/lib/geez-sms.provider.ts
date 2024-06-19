@@ -13,7 +13,7 @@ export class GeezSmsSmsProvider implements ISmsProvider {
   constructor(
     private config: {
       token: string;
-      sender_id?: number;
+      senderId?: number;
     }
   ) {
     this.geezSMS = new GeezSMS(config.token)
@@ -25,7 +25,7 @@ export class GeezSmsSmsProvider implements ISmsProvider {
     const message = {
       phone: options.to,
       msg: options.msg,
-      sender_id: options.sender_id || this.config.sender_id  // Optional
+      sender_id: options.senderId || this.config.senderId  // Optional
     };
     const response = await this.geezSMS.single.send(message);
     return {
