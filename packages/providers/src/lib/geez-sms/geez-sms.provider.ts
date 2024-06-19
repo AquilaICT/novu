@@ -4,7 +4,7 @@ import {
   ISmsOptions,
   ISmsProvider,
 } from '@novu/stateless';
-import { GeezSMS } from 'geezsms';
+import GeezSMS from 'geezsms';
 export class GeezSmsSmsProvider implements ISmsProvider {
   id = 'geez-sms';
   channelType = ChannelTypeEnum.SMS as ChannelTypeEnum.SMS;
@@ -24,8 +24,8 @@ export class GeezSmsSmsProvider implements ISmsProvider {
   ): Promise<ISendMessageSuccessResponse> {
     const message = {
       phone: options.to,
-      msg: options.msg,
-      sender_id: options.senderId || this.config.senderId  // Optional
+      msg: options.content,
+      sender_id: options.from || this.config.senderId  // Optional
     };
     const response = await this.geezSMS.single.send(message);
     return {
