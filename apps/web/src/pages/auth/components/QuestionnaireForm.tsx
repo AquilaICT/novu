@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import decode from 'jwt-decode';
 import { Group, Input as MantineInput } from '@mantine/core';
 
+import type { ICreateOrganizationDto, IResponseError, ProductUseCases } from '@novu/shared';
 import { JobTitleEnum, jobTitleToLabelMapper, ProductUseCasesEnum } from '@novu/shared';
-import type { ProductUseCases, IResponseError, ICreateOrganizationDto, IJwtPayload } from '@novu/shared';
 import {
   Button,
   Digest,
@@ -20,9 +19,9 @@ import {
 } from '@novu/design-system';
 
 import { api } from '../../../api/api.client';
-import { useAuthContext } from '../../../components/providers/AuthProvider';
+import { useAuth } from '../../../hooks/useAuth';
 import { useVercelIntegration, useVercelParams } from '../../../hooks';
-import { ROUTES } from '../../../constants/routes.enum';
+import { ROUTES } from '../../../constants/routes';
 import { DynamicCheckBox } from './dynamic-checkbox/DynamicCheckBox';
 import styled from '@emotion/styled/macro';
 import { useDomainParser } from './useDomainHook';
@@ -35,7 +34,7 @@ export function QuestionnaireForm() {
     control,
   } = useForm<IOrganizationCreateForm>({});
   const navigate = useNavigate();
-  const { setToken, token } = useAuthContext();
+  const { login, currentUser, currentOrganization, environmentId } = useAuth();
   const { startVercelSetup } = useVercelIntegration();
   const { isFromVercel } = useVercelParams();
   const { parse } = useDomainParser();
@@ -47,34 +46,21 @@ export function QuestionnaireForm() {
   >((data: ICreateOrganizationDto) => api.post(`/v1/organizations`, data));
 
   useEffect(() => {
-    if (token) {
-      const userData = decode<IJwtPayload>(token);
+    if (environmentId) {
+      if (isFromVercel) {
+        startVercelSetup();
 
-      if (userData.environmentId) {
-        if (isFromVercel) {
-          startVercelSetup();
-
-          return;
-        }
-
-        navigate(ROUTES.HOME);
+        return;
       }
     }
-  }, [token, navigate, isFromVercel, startVercelSetup]);
+  }, [navigate, isFromVercel, startVercelSetup, currentUser, environmentId]);
 
   async function createOrganization(data: IOrganizationCreateForm) {
     const { organizationName, ...rest } = data;
     const createDto: ICreateOrganizationDto = { ...rest, name: organizationName };
     const organization = await createOrganizationMutation(createDto);
     const organizationResponseToken = await api.post(`/v1/auth/organizations/${organization._id}/switch`, {});
-    setToken(organizationResponseToken);
-  }
-
-  function jwtHasKey(key: string) {
-    if (!token) return false;
-    const jwt = decode<IJwtPayload>(token);
-
-    return jwt && jwt[key];
+    await login(organizationResponseToken);
   }
 
   const onCreateOrganization = async (data: IOrganizationCreateForm) => {
@@ -82,7 +68,7 @@ export function QuestionnaireForm() {
 
     setLoading(true);
 
-    if (!jwtHasKey('organizationId')) {
+    if (!currentOrganization) {
       await createOrganization({ ...data });
     }
 

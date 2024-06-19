@@ -1,11 +1,11 @@
 import { Button, errorMessage, IconOutlineLockPerson, PasswordInput, successMessage } from '@novu/design-system';
 import { checkIsResponseError, IResponseError } from '@novu/shared';
-import { api } from '@novu/shared-web';
+import { api } from '../../../api';
 import * as Sentry from '@sentry/react';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { css } from '../../../styled-system/css';
-import { Stack } from '../../../styled-system/jsx';
+import { css } from '@novu/novui/css';
+import { Stack } from '@novu/novui/jsx';
 import { PasswordRequirementPopover } from '../../auth/components/PasswordRequirementPopover';
 import { SHARED_PASSWORD_INPUT_REGISTER_OPTIONS } from './UserProfilePasswordSidebar.shared';
 

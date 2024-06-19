@@ -103,7 +103,8 @@ export enum SmsProviderIdEnum {
   RingCentral = 'ring-central',
   BrevoSms = 'brevo-sms',
   EazySms = 'eazy-sms',
-  GeezSMS = 'geez-sms'
+  GeezSMS = 'geez-sms',
+  Mobishastra = 'mobishastra',
 }
 
 export enum ChatProviderIdEnum {
