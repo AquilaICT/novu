@@ -13,7 +13,7 @@ export class GeezSmsProvider implements ISmsProvider {
   constructor(
     private config: {
       token: string;
-      senderId?: number;
+      senderId?: string;
     }
   ) {
     this.geezSMS = new GeezSMS(config.token)
