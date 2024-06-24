@@ -469,7 +469,7 @@ export const geezConfig: IConfigCredentials[] = [
     key: CredentialsKeyEnum.From,
     displayName: 'Sender id',
     type: 'string',
-    required: true,
+    required: false,
   }
 ];
 
