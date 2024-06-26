@@ -15,6 +15,7 @@ export abstract class BaseSmsHandler implements ISmsHandler {
   }
 
   canHandle(providerId: string, channelType: ChannelTypeEnum) {
+    console.log("canHandle providerId", providerId, "this.providerId",this.providerId,  'channelTypei', channelType, "this.channelType", this.channelType)
     return providerId === this.providerId && channelType === this.channelType;
   }
 

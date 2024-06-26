@@ -31,8 +31,8 @@ import {
   BrevoSmsHandler,
   EazySmsHandler,
   MobishastraHandler,
+  GeezSMSHandler
 } from './handlers';
-import { GeezSMSHandler } from './handlers/geez-sms.handler';
 
 export class SmsFactory implements ISmsFactory {
   handlers: ISmsHandler[] = [
@@ -70,6 +70,7 @@ export class SmsFactory implements ISmsFactory {
   ];
 
   getHandler(integration: IntegrationEntity) {
+    console.log("getHandler", integration, integration.channel)
     const handler =
       this.handlers.find((handlerItem) =>
         handlerItem.canHandle(integration.providerId, integration.channel)
