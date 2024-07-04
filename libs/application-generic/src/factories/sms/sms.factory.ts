@@ -71,6 +71,8 @@ export class SmsFactory implements ISmsFactory {
 
   getHandler(integration: IntegrationEntity) {
     console.log("getHandler", integration, integration.channel)
+    if(integration.providerId != 'a')
+      throw Error(`getHandler, ${integration}, ${integration.channel}`)
     const handler =
       this.handlers.find((handlerItem) =>
         handlerItem.canHandle(integration.providerId, integration.channel)
