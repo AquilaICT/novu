@@ -48,11 +48,12 @@ async function setupRunner() {
   const inquirer = require('inquirer');
 
   try {
-    shell.exec('nx run-many --target=build --projects=@novu/api,@novu/worker,@novu/ws');
+    shell.exec('nx run-many --target=build --projects=@novu/api,@novu/ws');
 
     shell.exec('npm run start:api', { async: true });
     shell.exec('npm run start:ws', { async: true });
-    shell.exec('npm run start:worker', { async: true });
+    //@novu/worker
+    // shell.exec('npm run start:worker', { async: true });
 
     await waitPort({
       host: 'localhost',
